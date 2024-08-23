@@ -74,7 +74,7 @@ def remove_outliers(ball_track, dists, max_dist = 100):
     """
     outliers = list(np.where(np.array(dists) > max_dist)[0])
     for i in outliers:
-        if (dists[i+1] > max_dist) | (dists[i+1] == -1):       
+        if (dists[i] > max_dist) | (dists[i] == -1):       
             ball_track[i] = (None, None)
             outliers.remove(i)
         elif dists[i-1] == -1:
@@ -141,6 +141,9 @@ def write_track(frames, ball_track, path_output_video, fps, trace=7):
         trace: number of frames with detected trace
     """
     height, width = frames[0].shape[:2]
+    print('height', height)
+    print('width', width)
+
     out = cv2.VideoWriter(path_output_video, cv2.VideoWriter_fourcc(*'DIVX'), 
                           fps, (width, height))
     for num in range(len(frames)):
@@ -148,13 +151,13 @@ def write_track(frames, ball_track, path_output_video, fps, trace=7):
         for i in range(trace):
             if (num-i > 0):
                 if ball_track[num-i][0]:
-                    x = int(ball_track[num-i][0])
-                    y = int(ball_track[num-i][1])
+                    x = int(ball_track[num-i][0]*width/1280)
+                    y = int(ball_track[num-i][1]*height/720)
                     frame = cv2.circle(frame, (x,y), radius=0, color=(0, 0, 255), thickness=10-i)
                 else:
                     break
-        out.write(frame) 
-    out.release()    
+        out.write(frame)
+    out.release()   
 
 if __name__ == '__main__':
     
@@ -174,7 +177,8 @@ if __name__ == '__main__':
     
     frames, fps = read_video(args.video_path)
     ball_track, dists = infer_model(frames, model)
-    ball_track = remove_outliers(ball_track, dists)    
+    ball_track = remove_outliers(ball_track, dists)
+    print(ball_track)
     
     if args.extrapolation:
         subtracks = split_track(ball_track)

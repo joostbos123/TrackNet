@@ -21,12 +21,12 @@ def train(model, train_loader, optimizer, device, epoch, max_iters=200):
         optimizer.zero_grad()
         end_time = time.time()
         duration = time.strftime("%H:%M:%S", time.gmtime(end_time - start_time))
-        print('train | epoch = {}, iter = [{}|{}], loss = {}, time = {}'.format(epoch, iter_id, max_iters,
-                                                                                round(loss.item(), 6), duration))
+        # print('train | epoch = {}, iter = [{}|{}], loss = {}, time = {}'.format(epoch, iter_id, max_iters,
+        #                                                                         round(loss.item(), 6), duration))
         losses.append(loss.item())
         
-        if iter_id > max_iters - 1:
-            break
+        # if iter_id > max_iters - 1:
+        #     break
         
     return np.mean(losses)
 
@@ -58,7 +58,7 @@ def validate(model, val_loader, device, epoch, min_dist=5):
                             tp[vis] += 1
                         else:
                             fp[vis] += 1
-                    else:        
+                    else:
                         fp[vis] += 1
                 if not x_pred:
                     if vis != 0:

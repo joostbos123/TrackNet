@@ -7,7 +7,7 @@ import numpy as np
 
 class trackNetDataset(Dataset):
     def __init__(self, mode, input_height=360, input_width=640):
-        self.path_dataset = './datasets/trackNet'
+        self.path_dataset = 'model_training/ball_tracking/datasets/PadelCustom/padel_only_processed'
         assert mode in ['train', 'val'], 'incorrect mode'
         self.data = pd.read_csv(os.path.join(self.path_dataset, 'labels_{}.csv'.format(mode)))
         print('mode = {}, samples = {}'.format(mode, self.data.shape[0]))         
@@ -36,6 +36,9 @@ class trackNetDataset(Dataset):
     def get_output(self, path_gt):
         img = cv2.imread(path_gt)
         img = cv2.resize(img, (self.width, self.height))
+        # cv2.imshow('img_output', img)
+        # cv2.waitKey(0)
+
         img = img[:, :, 0]
         img = np.reshape(img, (self.width * self.height))
         return img
@@ -43,12 +46,18 @@ class trackNetDataset(Dataset):
     def get_input(self, path, path_prev, path_preprev):
         img = cv2.imread(path)
         img = cv2.resize(img, (self.width, self.height))
+        # cv2.imshow('img', img)
+        # cv2.waitKey(0)
 
         img_prev = cv2.imread(path_prev)
         img_prev = cv2.resize(img_prev, (self.width, self.height))
+        # cv2.imshow('img_prev', img_prev)
+        # cv2.waitKey(0)
         
         img_preprev = cv2.imread(path_preprev)
         img_preprev = cv2.resize(img_preprev, (self.width, self.height))
+        # cv2.imshow('img_preprev', img_preprev)
+        # cv2.waitKey(0)
         
         imgs = np.concatenate((img, img_prev, img_preprev), axis=2)
         imgs = imgs.astype(np.float32)/255.0
